@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.iot.mapper.BoardMapper">
+
+	<select id="getList" resultType="org.iot.domain.BoardVO" >
+		<![CDATA[
+		select * from (select * from custom where busi_num LIKE '%'||#{busi_num,jdbcType=VARCHAR}||'%'
+		]]>
+				<choose>
+						<when test="custom != null" >
+							and custom LIKE '%'||#{custom,jdbcType=VARCHAR}||'%'
+						</when>
+				</choose>
+				<![CDATA[
+		)
+		]]>
+	</select>
+		
+	<insert id="insert">
+		insert into account(busi_num,factory,trade_bank,account_num)
+		values (#{busi_num},#{factory},#{trade_bank},#{account_num})
+	</insert>
+
+	 <insert id="insertSelectKey">
+
+		INSERT INTO CUSTOM(busi_num, custom, ceo, short, charge_person, busi_condition, item, post_num, addr1, addr2 ,tel, fax, homepage, co_yn, foreign_yn, tax_yn, country_eng, country_kor, special_relation, trade_stop, regi_info_man, regi_info_date, mod_info_man, mod_info_date)
+		VALUES (#{busi_num}, #{custom}, #{ceo}, #{sshort}, #{charge_person}, #{busi_condition}, #{item}, #{post_num}, #{addr1}, #{addr2}, #{tel}, #{fax}, #{homepage} , #{co_yn}, #{foreign_yn}, #{tax_yn},#{country_eng},#{country_kor},#{special_relation}, #{trade_stop}, #{regi_info_man} ,TO_DATE(#{regi_info_date},'YYYY-MM-DD HH24:MI:SS'),#{mod_info_man},TO_DATE(#{mod_info_date},'YYYY-MM-DD HH24:MI:SS'))
+		
+	</insert>
+	
+	<resultMap type="org.iot.domain.BoardVO" id="boardMap">
+    	<id property="busi_num" column="busi_num"/>
+    	<result property="busi_num" column="busi_num"/>
+    	<result property="custom" column="custom"/>
+    	<result property="ceo" column="ceo"/>
+    	<result property="sshort" column="short"/>
+    	<result property="charge_person" column="charge_person"/>
+    	<result property="busi_condition" column="busi_condition"/>
+    	<result property="item" column="item"/>
+    	<result property="post_num" column="post_num"/>
+    	<result property="addr1" column="addr1"/>
+    	<result property="addr2" column="addr2"/>
+    	<result property="tel" column="tel"/>
+    	<result property="fax" column="fax"/>
+    	<result property="homepage" column="homepage"/>
+    	<result property="co_yn" column="co_yn"/>
+    	<result property="foreign_yn" column="foreign_yn"/>
+    	<result property="tax_yn" column="tax_yn"/>
+    	<result property="special_relation" column="special_relation"/>
+    	<result property="trade_stop" column="trade_stop"/>
+    	<result property="regi_info_man" column="regi_info_man"/>
+    	<result property="regi_info_date" column="regi_info_date"/>
+    	<result property="mod_info_man" column="mod_info_man"/>
+    	<result property="mod_info_date" column="mod_info_date"/>
+    	<result property="factory" column="factory"/>
+    	<result property="trade_bank" column="trade_bank"/>
+    	<result property="account_num" column="account_num"/>
+  	</resultMap>
+  	  
+  	<resultMap type="org.iot.domain.AccountVO" id="accountMap">
+    	<result property="busi_num" column="busi_num"/>
+    	<result property="factory" column="factory"/>
+    	<result property="trade_bank" column="trade_bank"/>
+    	<result property="account_num" column="account_num"/>
+  	</resultMap>
+
+  	<select id="read" parameterType="String" resultMap="boardMap">
+  	<![CDATA[
+		select * from custom c LEFT OUTER JOIN account a on c.busi_num = a.busi_num where trim(c.busi_num) = #{busi_num}
+	]]>
+  	</select> 
+	
+	<delete id="delete">
+		delete (select * from custom c LEFT OUTER JOIN account a on c.busi_num = a.busi_num where c.busi_num = #{busi_num})
+	</delete>
+
+	<update id="update">
+		merge into custom c
+		using dual
+		on (c.busi_num = #{busi_num})
+		when matched then
+		update set
+		custom= #{custom},
+		short= #{sshort},
+		ceo= #{ceo},
+		charge_person= #{charge_person},
+		busi_condition= #{busi_condition},
+		item= #{item},
+		post_num= #{post_num},
+		addr1= #{addr1},
+		addr2= #{addr2},
+		tel= #{tel},
+		fax = #{fax},
+		homepage= #{homepage},
+		co_yn= #{co_yn},
+		foreign_yn= #{foreign_yn},
+		tax_yn= #{tax_yn},
+		special_relation= #{special_relation},
+		trade_stop = #{trade_stop},
+		country_eng= #{country_eng},
+		country_kor= #{country_kor},
+		regi_info_man= #{regi_info_man},
+		regi_info_date= #{regi_info_date},
+		mod_info_man= #{mod_info_man},
+		mod_info_date = #{mod_info_date}
+	</update>
+	
+	<update id="updateAccount">
+		merge into account a
+		using dual
+		on (a.busi_num = #{busi_num})
+		when matched then
+		update set
+		factory = #{factory},
+		trade_bank = #{trade_bank},
+		account_num = #{account_num}
+	</update>
+
+</mapper>
